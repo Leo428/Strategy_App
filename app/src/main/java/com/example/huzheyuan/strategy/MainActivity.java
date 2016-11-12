@@ -80,8 +80,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_import) {// Handle the import action
             Toast.makeText(MainActivity.this,"Import",Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this,importActivity.class));
         } else if (id == R.id.nav_gallery) {
@@ -90,10 +89,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_manage) {
 
-        } else if (id == R.id.nav_share) {
-
+        } else if (id == R.id.nav_receive) {// Handle the receive action
+            Toast.makeText(MainActivity.this,"Receive",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,BluetoothReceiveActivity.class));
         } else if (id == R.id.nav_send) {
-
+            Toast.makeText(MainActivity.this,"Test",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,TestBT.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -3,7 +3,7 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_import"
             android:icon="@drawable/ic_menu_camera"
             android:title="Import" />
         <item
@@ -23,9 +23,9 @@
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_receive"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Receive" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
