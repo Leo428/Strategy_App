@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this,BluetoothReceiveActivity.class));
         } else if (id == R.id.nav_send) {
             Toast.makeText(MainActivity.this,"Test",Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(MainActivity.this,TestBT.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

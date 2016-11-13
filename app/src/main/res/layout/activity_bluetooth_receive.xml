@@ -16,14 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ListView
-            android:id="@+id/blueToothList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
-
     </android.support.v4.widget.SwipeRefreshLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabBlueTooth"
         android:layout_width="wrap_content"
@@ -34,4 +28,20 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         app:backgroundTint="@color/colorPrimary" />
+
+    <ListView
+        android:paddingBottom="10dp"
+        android:id="@+id/blueToothList"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:paddingTop="10dp"
+        android:id="@+id/blueToothDiscoverList"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>
