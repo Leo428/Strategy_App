@@ -23,6 +23,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -48,27 +49,40 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_receive);
-//        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         fabBT = (FloatingActionButton) findViewById(R.id.fabBlueTooth);
         refreshBT = (SwipeRefreshLayout) findViewById(R.id.refreshBTDevice);
         bTList = (ListView) findViewById(R.id.blueToothList);
         discoverList = (ListView) findViewById(R.id.blueToothDiscoverList);
-
+    }
+    @Override
+    protected void onStart(){
+        super.onStart();
         pairedDevice();
         fabBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openBT();//open blueTooth
-//                if(bluetoothAdapter.isDiscovering()){
-//                    bluetoothAdapter.cancelDiscovery();
-//                }
                 // 注册用以接收到已搜索到的蓝牙设备的receiver
                 IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 registerReceiver(broadcastReceiver, bTFound);
                 // 注册搜索完时的receiver
                 bTFound = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
                 registerReceiver(broadcastReceiver,bTFound);
-                scanDevice(bluetoothAdapter.isEnabled());
+                scanDevice(bluetoothAdapter.isEnabled());//Scan for the devices
+            }
+        });
+        bTList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(BluetoothReceiveActivity.this,bTDeviceList.get(position),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+        discoverList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(BluetoothReceiveActivity.this,discoverDeviceList.get(position),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -83,7 +97,6 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
         }
         this.unregisterReceiver(broadcastReceiver);
     }
-
     public void openBT(){
         if(bluetoothAdapter == null) { // check for bluetooth function
             Toast.makeText(this,"No Bluetooth Available",Toast.LENGTH_SHORT).show();
@@ -91,25 +104,24 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
         if(!bluetoothAdapter.isEnabled()){ //弹出对话框提示用户打开
             Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetooth, 0);
-//            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//            startActivityForResult(enabler,0);
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            startActivityForResult(enabler,0);
 
 //            Toast.makeText(this,"Scanning",Toast.LENGTH_SHORT).show();
 //            bluetoothAdapter.startDiscovery();
 //            IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 //            registerReceiver(broadcastReceiver, bTFound);
         }
-//        else{
-//            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//            startActivityForResult(enabler,0);
+        else{
+            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            startActivityForResult(enabler,0);
 //
 //            Toast.makeText(this,"Scanning",Toast.LENGTH_SHORT).show();
 //            bluetoothAdapter.startDiscovery();
 //            IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 //            registerReceiver(broadcastReceiver, bTFound);
-//        }
+        }
     }
-
     public void scanDevice(boolean bTenable){
         if(bTenable){
             if(bluetoothAdapter.isDiscovering()){
@@ -141,7 +153,6 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
             }
         }
     }
-
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
