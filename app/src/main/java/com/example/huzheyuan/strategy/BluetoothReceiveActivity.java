@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class BluetoothReceiveActivity extends AppCompatActivity {
+    String deviceInfo;
+    String address;
     FloatingActionButton fabBT;
     SwipeRefreshLayout refreshBT;
     ListView bTList;
@@ -43,6 +45,9 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
     BluetoothSocket bluetoothSocket;
     ArrayList<String> bTDeviceList = new ArrayList<>();
     //ArrayList<String> discoverDeviceList = new ArrayList<>();
+    ClientThread clientThread; //Questioning???
+    AlertDialog alert = null;
+    AlertDialog.Builder builder = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,15 +79,31 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(BluetoothReceiveActivity.this,bTDeviceList.get(position),
                         Toast.LENGTH_SHORT).show();
+                deviceInfo = bTDeviceList.get(position);
+                address = deviceInfo.substring(deviceInfo.indexOf(":") + 1).trim();
+                Log.e("Address: " ,address);
+                alert = null;
+                builder = new AlertDialog.Builder(BluetoothReceiveActivity.this);
+                alert = builder.setTitle("Bluetooth Connection")
+                        .setMessage("Connect to " + address)
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                alert.cancel();
+                            }
+                        })
+                        .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(BluetoothReceiveActivity.this
+                                        ,"Connecting to " + address
+                                        , Toast.LENGTH_SHORT ).show();
+                            }
+                        }).create();
+                alert.show();
             }
         });
-//        discoverList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(BluetoothReceiveActivity.this,bTDeviceList.get(position),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
+
         refreshBT.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -184,6 +205,8 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
 //                bTList.append(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
                 bTList.setAdapter(new ArrayAdapter<>
                         (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,bTDeviceList));
+                clientThread = new ClientThread(bluetoothDevice,bluetoothAdapter);
+                //clientThread.run();
             }
         }
     };
