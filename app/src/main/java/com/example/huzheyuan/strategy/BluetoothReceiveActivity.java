@@ -36,15 +36,13 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
     FloatingActionButton fabBT;
     SwipeRefreshLayout refreshBT;
     ListView bTList;
-    ListView discoverList;
+//    ListView discoverList;
 //    TextView bTList;
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     BluetoothDevice bluetoothDevice;
     BluetoothSocket bluetoothSocket;
-
     ArrayList<String> bTDeviceList = new ArrayList<>();
-    ArrayList<String> discoverDeviceList = new ArrayList<>();
-
+    //ArrayList<String> discoverDeviceList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,23 +50,23 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
         fabBT = (FloatingActionButton) findViewById(R.id.fabBlueTooth);
         refreshBT = (SwipeRefreshLayout) findViewById(R.id.refreshBTDevice);
         bTList = (ListView) findViewById(R.id.blueToothList);
-        discoverList = (ListView) findViewById(R.id.blueToothDiscoverList);
+//        discoverList = (ListView) findViewById(R.id.blueToothDiscoverList);
+        // 注册用以接收到已搜索到的蓝牙设备的receiver
+        IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(broadcastReceiver, bTFound);
+        // 注册搜索完时的receiver
+        bTFound = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(broadcastReceiver,bTFound);
     }
+
     @Override
     protected void onStart(){
         super.onStart();
-        pairedDevice();
         fabBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openBT();//open blueTooth
-                // 注册用以接收到已搜索到的蓝牙设备的receiver
-                IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                registerReceiver(broadcastReceiver, bTFound);
-                // 注册搜索完时的receiver
-                bTFound = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-                registerReceiver(broadcastReceiver,bTFound);
-                scanDevice(bluetoothAdapter.isEnabled());//Scan for the devices
+                pairedDevice();
             }
         });
         bTList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,15 +76,27 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
-        discoverList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        discoverList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(BluetoothReceiveActivity.this,bTDeviceList.get(position),
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+        refreshBT.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(BluetoothReceiveActivity.this,discoverDeviceList.get(position),
-                        Toast.LENGTH_SHORT).show();
+            public void onRefresh() {
+//                pairedDevice();
+                scanDevice(bluetoothAdapter.isEnabled());//Scan for the devices
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshBT.setRefreshing(false);
+                    }
+                },7000); // only scan/ refresh for 7 seconds
             }
         });
     }
-
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -104,8 +114,8 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
         if(!bluetoothAdapter.isEnabled()){ //弹出对话框提示用户打开
             Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBluetooth, 0);
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            startActivityForResult(enabler,0);
+//            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//            startActivityForResult(enabler,0);
 
 //            Toast.makeText(this,"Scanning",Toast.LENGTH_SHORT).show();
 //            bluetoothAdapter.startDiscovery();
@@ -113,10 +123,9 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
 //            registerReceiver(broadcastReceiver, bTFound);
         }
         else{
-            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            startActivityForResult(enabler,0);
-//
-//            Toast.makeText(this,"Scanning",Toast.LENGTH_SHORT).show();
+//            Intent enabler = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//            startActivityForResult(enabler,0);
+            Toast.makeText(this,"Bluetooth On!",Toast.LENGTH_SHORT).show();
 //            bluetoothAdapter.startDiscovery();
 //            IntentFilter bTFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
 //            registerReceiver(broadcastReceiver, bTFound);
@@ -133,26 +142,32 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+            pairedDevice();
             bluetoothAdapter.startDiscovery();
             System.out.println("DISCOVER " + bluetoothAdapter.isDiscovering());
         }
         else{
             Toast.makeText(this,"Scan Failed", Toast.LENGTH_SHORT).show();
+            refreshBT.setRefreshing(false);
         }
     }
-    public void pairedDevice(){
+    public void pairedDevice() {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        if(pairedDevices.size() > 0){
-            for(BluetoothDevice device : pairedDevices){
-                bTDeviceList.add(device.getName() + "\n" + device.getAddress());
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                bTDeviceList.clear();// clear everything before you add new things
+                bTDeviceList.add(device.getName() + "\n" + device.getAddress());// add new data
                 Log.e("Bond", device.getName() + "\n" + device.getAddress());
                 // 显示在TextView上
 //                    bTList.append(device.getName() + "\n" + device.getAddress());
-                bTList.setAdapter(new ArrayAdapter<>
-                        (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,bTDeviceList));
+                    bTList.setAdapter(new ArrayAdapter<>
+                            (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,bTDeviceList));
             }
+        } else {
+            bTDeviceList.clear();
         }
     }
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -160,12 +175,15 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
             // 获得已经搜索到的蓝牙设备
             if(action.equals(BluetoothDevice.ACTION_FOUND)){
                 bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                discoverDeviceList.add(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
+                String deviceName = bluetoothDevice.getName();
+                String deviceMac = bluetoothDevice.getAddress();
+                Log.e("Naming", deviceName + " " + deviceMac);
+                bTDeviceList.add(deviceName + "\n" + deviceMac);
                 Log.e("BT", bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
                 // 显示在TextView上
 //                bTList.append(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
-                discoverList.setAdapter(new ArrayAdapter<>
-                        (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,discoverDeviceList));
+                bTList.setAdapter(new ArrayAdapter<>
+                        (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,bTDeviceList));
             }
         }
     };
