@@ -33,7 +33,7 @@
         android:clickable="true"
         app:fabSize="mini"
         app:srcCompat="@android:drawable/stat_sys_data_bluetooth"
+        app:backgroundTint="@color/colorPrimary"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        app:backgroundTint="@color/colorPrimary" />
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
