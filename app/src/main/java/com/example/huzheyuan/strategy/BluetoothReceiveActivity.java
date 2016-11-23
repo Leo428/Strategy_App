@@ -41,7 +41,7 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
 //    ListView discoverList;
 //    TextView bTList;
     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    BluetoothDevice bluetoothDevice;
+    BluetoothDevice bluetoothDevice = null;
     BluetoothSocket bluetoothSocket;
     ArrayList<String> bTDeviceList = new ArrayList<>();
     //ArrayList<String> discoverDeviceList = new ArrayList<>();
@@ -80,7 +80,7 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
                 Toast.makeText(BluetoothReceiveActivity.this,bTDeviceList.get(position),
                         Toast.LENGTH_SHORT).show();
                 deviceInfo = bTDeviceList.get(position);
-                address = deviceInfo.substring(deviceInfo.indexOf(":") + 1).trim();
+                address = deviceInfo.substring(deviceInfo.indexOf(":") - 2).trim(); //amazing way
                 Log.e("Address: " ,address);
                 alert = null;
                 builder = new AlertDialog.Builder(BluetoothReceiveActivity.this);
@@ -92,12 +92,16 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
                                 alert.cancel();
                             }
                         })
-                        .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Connecting", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(BluetoothReceiveActivity.this
                                         ,"Connecting to " + address
                                         , Toast.LENGTH_SHORT ).show();
+                                //testament in process
+                                clientThread = new ClientThread
+                                        (bluetoothDevice,bluetoothAdapter,address);
+                                clientThread.run();
                             }
                         }).create();
                 alert.show();
@@ -205,8 +209,6 @@ public class BluetoothReceiveActivity extends AppCompatActivity {
 //                bTList.append(bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress());
                 bTList.setAdapter(new ArrayAdapter<>
                         (BluetoothReceiveActivity.this,android.R.layout.simple_list_item_1,bTDeviceList));
-                clientThread = new ClientThread(bluetoothDevice,bluetoothAdapter);
-                //clientThread.run();
             }
         }
     };
