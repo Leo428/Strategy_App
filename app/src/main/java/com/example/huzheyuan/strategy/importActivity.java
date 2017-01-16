@@ -1,44 +1,93 @@
 package com.example.huzheyuan.strategy;
 
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ImageView;
 
-import java.io.File;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.BeepManager;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
-public class importActivity extends AppCompatActivity {
-    private SwipeRefreshLayout refreshLayout;
+import java.util.List;
+
+/**
+ * This sample performs continuous scanning, displaying the barcode and source image whenever
+ * a barcode is scanned.
+ */
+public class importActivity extends Activity {
+    private static final String TAG = importActivity.class.getSimpleName();
+    private DecoratedBarcodeView barcodeView;
+    private BeepManager beepManager;
+    private String lastText;
+
+    private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult result) {
+            if(result.getText() == null || result.getText().equals(lastText)) {
+                // Prevent duplicate scans
+                return;
+            }
+
+            lastText = result.getText();
+            barcodeView.setStatusText(result.getText());
+            beepManager.playBeepSoundAndVibrate();
+
+            //Added preview of scanned barcode
+            ImageView imageView = (ImageView) findViewById(R.id.barcodePreview);
+            imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+        }
+
+        @Override
+        public void possibleResultPoints(List<ResultPoint> resultPoints) {
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_import);
-        ListView fileList = (ListView) findViewById(R.id.fileList);
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshFile);
+
+        barcodeView = (DecoratedBarcodeView) findViewById(R.id.barcode_scanner);
+        barcodeView.decodeContinuous(callback);
+
+        beepManager = new BeepManager(this);
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
-        /**
-         * this is the function for refreshing the database file
-         */
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Toast.makeText(importActivity.this,"Refreshing",Toast.LENGTH_SHORT).show();
-                //File dataFiles = new File()
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLayout.setRefreshing(false);
-                    }
-                },2000);
-            }
-        });
+    protected void onResume() {
+        super.onResume();
+
+        barcodeView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        barcodeView.pause();
+    }
+
+    public void pause(View view) {
+        barcodeView.pause();
+    }
+
+    public void resume(View view) {
+        barcodeView.resume();
+    }
+
+    public void triggerScan(View view) {
+        barcodeView.decodeSingle(callback);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return barcodeView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
     }
 }
 
