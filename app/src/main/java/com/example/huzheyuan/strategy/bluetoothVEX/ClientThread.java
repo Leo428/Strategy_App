@@ -1,4 +1,4 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.bluetoothVEX;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

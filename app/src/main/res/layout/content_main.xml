@@ -14,10 +14,12 @@
     tools:showIn="@layout/app_bar_main">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/mainPageRecycler"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
 
     </android.support.v7.widget.RecyclerView>
+
 </RelativeLayout>

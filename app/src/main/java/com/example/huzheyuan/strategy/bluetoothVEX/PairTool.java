@@ -1,4 +1,4 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.bluetoothVEX;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
