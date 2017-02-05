@@ -1,4 +1,4 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.huzheyuan.strategy.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

@@ -1,10 +1,12 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.activities;
 
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.huzheyuan.strategy.R;
 
 public class SearchResultsActivity extends Activity {
 

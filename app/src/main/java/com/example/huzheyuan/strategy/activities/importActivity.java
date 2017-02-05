@@ -1,4 +1,4 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.activities;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.huzheyuan.strategy.R;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.android.BeepManager;
 import com.journeyapps.barcodescanner.BarcodeCallback;

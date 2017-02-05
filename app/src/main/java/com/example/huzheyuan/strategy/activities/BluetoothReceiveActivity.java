@@ -1,4 +1,4 @@
-package com.example.huzheyuan.strategy;
+package com.example.huzheyuan.strategy.activities;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.huzheyuan.strategy.R;
 import com.example.huzheyuan.strategy.bluetoothVEX.ClientThread;
 
 import java.util.ArrayList;

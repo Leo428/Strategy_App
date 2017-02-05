@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
@@ -34,11 +34,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".importActivity"
+            android:name=".activities.importActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation" />
-        <activity android:name=".BluetoothReceiveActivity"></activity>
-        <activity android:name=".SearchResultsActivity"></activity>
+        <activity android:name=".activities.BluetoothReceiveActivity"></activity>
+        <activity android:name=".activities.SearchResultsActivity"></activity>
     </application>
 
 </manifest>
